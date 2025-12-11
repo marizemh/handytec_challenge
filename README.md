@@ -1,154 +1,79 @@
-# Handytec DevOps Challenge
+# Enhanced DevOps Challenge Solution
 
-![Project Logo](https://handytec.ai/wp-content/uploads/2023/04/logo-handytec.png)
+This repository contains a production-grade DevOps solution featuring Multi-Cloud Infrastructure as Code, Advanced Kubernetes Helm Charts, System Automation, and a visual Monitoring Dashboard.
 
-This repository contains the solution for the Handytec DevOps Challenge. It includes Infrastructure as Code (IaC) for deploying a Kubernetes cluster on AWS using Terraform, a Helm deployment for a sample application, and a Bash script for system monitoring.
+## 🚀 Features
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Terraform](https://img.shields.io/badge/terraform-%3E%3D1.0-blueviolet)
-![AWS](https://img.shields.io/badge/aws-provider-orange)
+- **Infrastructure as Code (IaC)**: Modular Terraform for AWS (EKS) and Azure (AKS).
+- **Kubernetes**: Helm charts with environment-specific values (`dev`, `prod`) and Ingress with TLS.
+- **Automation**: `health_check.sh` with JSON/CSV output, self-healing, and alerting.
+- **Monitoring**: Custom Flask Dashboard and k6 Load Testing scripts.
+- **CI/CD**: GitHub Actions for Terraform validation, App build, and K8s deployment.
 
-## 📒 Index
+## 📂 Repository Structure
 
-- [About](#-about)
-- [Usage](#-usage)
-- [Installation](#-installation)
-- [Commands](#-commands)
-- [Development](#-development)
-- [Pre-Requisites](#-pre-requisites)
-- [Development Environment](#-development-environment)
-- [File Structure](#-file-structure)
-- [Build](#-build)
-- [Deployment](#-deployment)
-- [Community](#-community)
-- [Contribution](#-contribution)
-- [Branches](#-branches)
-- [Guideline](#-guideline)
-- [FAQ](#-faq)
-- [Resources](#-resources)
-- [Gallery](#-gallery)
-- [Credit/Acknowledgment](#-creditacknowledgment)
-- [License](#-license)
+```
+├── infra/
+│   ├── aws/            # AWS Terraform Modules (VPC, EKS, IAM)
+│   ├── azure/          # Azure Terraform Modules (Placeholder for Future)
+│   └── archive/        # Legacy code
+├── charts/
+│   └── devops-app/     # Helm Chart for the Application
+├── scripts/
+│   └── health_check.sh # Advanced System Health Check
+├── dashboard/
+│   ├── app.py          # Flask Monitoring App
+│   └── load_test.js    # k6 Load Test
+├── docs/               # Architecture and Guides
+└── .github/workflows/  # CI/CD Pipelines
+```
 
-## 🔰 About
-This project demonstrates a complete DevOps workflow including:
-1.  **Infrastructure Provisioning**: Using Terraform to create a VPC and EKS cluster on AWS.
-2.  **Application Deployment**: Using Helm to deploy the `nginxdemos/hello` container.
-3.  **System Monitoring**: A Bash script to check service status, memory usage, and disk space on AlmaLinux.
+## 🛠 Quick Start
 
-## ⚡ Usage
-The project is divided into two main parts: Infrastructure (Terraform) and Monitoring (Bash).
+### Prerequisites
+- Terraform >= 1.5
+- kubectl & helm
+- AWS CLI configured
 
-### Infrastructure
-Navigate to the `terraform` directory to manage the AWS infrastructure.
-
-### Monitoring
-Run the `scripts/monitor.sh` script on your Linux server to get a health report.
-
-## 🔌 Installation
-
-### Terraform & AWS
-1.  Install [Terraform](https://developer.hashicorp.com/terraform/downloads).
-2.  Install [AWS CLI](https://aws.amazon.com/cli/).
-3.  Configure AWS credentials: `aws configure`.
-
-### Bash Script
-1.  Ensure you have a Bash shell (standard on Linux).
-2.  Make the script executable: `chmod +x scripts/monitor.sh`.
-
-## 📦 Commands
-
-### Terraform
+### 1. Provision Infrastructure
 ```bash
-cd terraform
+cd infra/aws
 terraform init
-terraform plan
-terraform apply
+terraform apply -var="environment=dev"
 ```
 
-### Monitoring Script
+### 2. Deploy Application
 ```bash
-./scripts/monitor.sh
+helm upgrade --install devops-app ./charts/devops-app -f ./charts/devops-app/values-dev.yaml
 ```
 
-## 🔧 Development
-Contributions are welcome to improve the infrastructure code or the monitoring script.
-
-## 📓 Pre-Requisites
--   **Terraform**: v1.0+
--   **AWS CLI**: v2+
--   **Kubectl**: Compatible with EKS 1.27
--   **Bash**: v4+
-
-## 🔩 Development Environment
-1.  Clone the repository:
-    ```bash
-    git clone git@github.com:marizemh/handytec_challenge.git
-    cd handytec_challenge
-    ```
-2.  Install dependencies as listed in Pre-Requisites.
-
-## 📁 File Structure
-```
-.
-├── assets
-│   └── infrastructure_diagram.png
-├── scripts
-│   └── monitor.sh
-├── terraform
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   └── helm.tf
-└── README.md
+### 3. Run Health Check
+```bash
+./scripts/health_check.sh --json --fix
 ```
 
-| No | File Name | Details |
-|----|-----------|---------|
-| 1 | main.tf | Main Terraform config for VPC and EKS |
-| 2 | helm.tf | Helm provider and release config |
-| 3 | monitor.sh | Bash script for system monitoring |
+## 📊 Monitoring Dashboard
 
-## 🔨 Build
-No build step is required for the Terraform code. The Docker image is pulled from Docker Hub.
+The dashboard provides real-time metrics of the host VM.
+To run locally:
+```bash
+cd dashboard
+pip install -r requirements.txt
+python app.py
+```
+Visit `http://localhost:5000`.
 
-## 🚀 Deployment
-Deployment is handled via Terraform. Running `terraform apply` will:
-1.  Create the VPC.
-2.  Create the EKS Cluster.
-3.  Deploy the "Hello World" application using Helm.
+## 🧪 CI/CD
 
-## 🌸 Community
-Join the Handytec community for support and discussions.
+- **CI Infra**: Validates Terraform and runs security scans (checkov).
+- **CI App**: Builds Docker image and lints Helm charts.
+- **CD Deploy**: Auto-deploys to EKS on push to `main`.
 
-## 🔥 Contribution
-Your contributions are always welcome!
--   **Report a bug**: Open an issue.
--   **Request a feature**: Open an issue.
--   **Create a pull request**: Fork the repo, create a feature branch, and submit a PR.
+## 📈 Cost Optimization Tips
+- **Spot Instances**: Use Spot instances for EKS node groups in Dev.
+- **Auto-scaling**: HPA is enabled to scale down replicas during low traffic.
+- **Clean up**: `terraform destroy` when not in use.
 
-## 🌵 Branches
--   `master`: Production branch.
--   `stage`: Development branch.
--   `feat-*`: Feature branches.
-
-## ❗ Guideline
--   Follow HCL best practices for Terraform.
--   Follow ShellCheck guidelines for Bash scripts.
-
-## ❓ FAQ
-**Q: Can I use this on Azure?**
-A: This specific configuration is for AWS.
-
-## 📄 Resources
--   [Terraform EKS Module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
--   [Helm Provider](https://registry.terraform.io/providers/hashicorp/helm/latest)
-
-## 📷 Gallery
-![Infrastructure Diagram](./assets/infrastructure_diagram.png)
-
-## 🌟 Credit/Acknowledgment
-Developed by Marizé Mijares Hernández for the Handytec Challenge.
-
-## 🔒 License
-MIT License.
+## 🐛 Troubleshooting
+- **Pod Pending**: Check `kubectl describe pod` for resource limits or node selectors.
+- **Ingress 404**: Ensure the Ingress Controller is installed and DNS is propagated.
