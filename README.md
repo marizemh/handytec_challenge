@@ -83,7 +83,7 @@ Contributions are welcome to improve the infrastructure code or the monitoring s
 ## 🔩 Development Environment
 1.  Clone the repository:
     ```bash
-    git clone <repository-url>
+    git clone git@github.com:marizemh/handytec_challenge.git
     cd handytec_challenge
     ```
 2.  Install dependencies as listed in Pre-Requisites.
