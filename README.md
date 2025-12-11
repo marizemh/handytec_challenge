@@ -2,6 +2,8 @@
 
 This repository contains a production-grade DevOps solution featuring Multi-Cloud Infrastructure as Code, Advanced Kubernetes Helm Charts, System Automation, and a visual Monitoring Dashboard.
 
+![Architecture Diagram](docs/architecture.png)
+
 ## 🚀 Features
 
 - **Infrastructure as Code (IaC)**: Modular Terraform for AWS (EKS) and Azure (AKS).
