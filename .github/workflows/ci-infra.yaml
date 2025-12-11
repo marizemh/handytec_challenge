@@ -36,3 +36,11 @@ jobs:
         with:
           directory: infra/aws
           headers: disable
+
+      - name: Run Trivy Config Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: 'infra/aws'
+          exit-code: '1'
+          ignore-unfixed: true
